@@ -1,8 +1,18 @@
-use axum::{extract::Multipart, routing::post, Json, Router};
+use axum::{
+    extract::{Multipart, Query},
+    routing::post,
+    Json, Router,
+};
 use image::io::Reader as ImageReader;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::io::Cursor;
 use tapciify::{AsciiConverter, AsciiImage, RawAsciiImage};
+
+#[derive(Deserialize)]
+pub struct ConvertQuery {
+    pub width: Option<u32>,
+    pub height: Option<u32>,
+}
 
 #[derive(Serialize)]
 pub struct AsciiCharacterDef {
@@ -39,7 +49,7 @@ struct ConvertColoredResult {
 
 async fn root() {}
 
-async fn convert(mut multipart: Multipart) -> Json<ConvertResult> {
+async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
     let mut raw_ascii_images: Vec<AsciiImage> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
@@ -53,7 +63,8 @@ async fn convert(mut multipart: Multipart) -> Json<ConvertResult> {
 
         let ascii_converter = AsciiConverter {
             img,
-            width: 64,
+            width: query.width.unwrap_or(0),
+            height: query.height.unwrap_or(0),
             ..Default::default()
         };
 
@@ -72,7 +83,10 @@ async fn convert(mut multipart: Multipart) -> Json<ConvertResult> {
     })
 }
 
-async fn convert_colored(mut multipart: Multipart) -> Json<ConvertColoredResult> {
+async fn convert_colored(
+    query: Query<ConvertQuery>,
+    mut multipart: Multipart,
+) -> Json<ConvertColoredResult> {
     let mut raw_ascii_images: Vec<RawAsciiImage> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
@@ -86,7 +100,8 @@ async fn convert_colored(mut multipart: Multipart) -> Json<ConvertColoredResult>
 
         let ascii_converter = AsciiConverter {
             img,
-            width: 64,
+            width: query.width.unwrap_or(0),
+            height: query.height.unwrap_or(0),
             ..Default::default()
         };
 

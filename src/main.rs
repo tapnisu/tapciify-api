@@ -25,26 +25,27 @@ pub struct AsciiCharacterDef {
 
 #[derive(Serialize)]
 pub struct AsciiImageDef {
-    pub result: String,
+    #[serde(rename = "asciiImage")]
+    pub ascii_image: String,
     pub width: u32,
     pub height: u32,
 }
 
 #[derive(Serialize)]
 pub struct RawAsciiImageDef {
-    pub result: Vec<AsciiCharacterDef>,
+    pub characters: Vec<AsciiCharacterDef>,
     pub width: u32,
     pub height: u32,
 }
 
 #[derive(Serialize)]
 struct ConvertResult {
-    result: Vec<AsciiImageDef>,
+    data: Vec<AsciiImageDef>,
 }
 
 #[derive(Serialize)]
 struct ConvertColoredResult {
-    result: Vec<RawAsciiImageDef>,
+    data: Vec<RawAsciiImageDef>,
 }
 
 async fn root() {}
@@ -72,10 +73,10 @@ async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<C
     }
 
     Json(ConvertResult {
-        result: raw_ascii_images
+        data: raw_ascii_images
             .iter()
             .map(|raw_ascii_image| AsciiImageDef {
-                result: raw_ascii_image.result.clone(),
+                ascii_image: raw_ascii_image.text.clone(),
                 width: raw_ascii_image.width,
                 height: raw_ascii_image.height,
             })
@@ -109,11 +110,11 @@ async fn convert_colored(
     }
 
     Json(ConvertColoredResult {
-        result: raw_ascii_images
+        data: raw_ascii_images
             .iter()
             .map(|raw_ascii_image| RawAsciiImageDef {
-                result: raw_ascii_image
-                    .result
+                characters: raw_ascii_image
+                    .characters
                     .iter()
                     .map(|ascii_character| AsciiCharacterDef {
                         character: ascii_character.character,

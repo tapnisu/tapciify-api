@@ -6,7 +6,7 @@ use axum::{
 use image::io::Reader as ImageReader;
 use serde::{Deserialize, Serialize};
 use std::io::Cursor;
-use tapciify::{AsciiConverter, AsciiImage, RawAsciiImage};
+use tapciify::{AsciiConverter, AsciiArt, RawAsciiArt};
 
 #[derive(Deserialize)]
 pub struct ConvertQuery {
@@ -51,7 +51,7 @@ struct ConvertColoredResult {
 async fn root() {}
 
 async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
-    let mut raw_ascii_images: Vec<AsciiImage> = vec![];
+    let mut raw_ascii_images: Vec<AsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -88,7 +88,7 @@ async fn convert_colored(
     query: Query<ConvertQuery>,
     mut multipart: Multipart,
 ) -> Json<ConvertColoredResult> {
-    let mut raw_ascii_images: Vec<RawAsciiImage> = vec![];
+    let mut raw_ascii_images: Vec<RawAsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();

@@ -9,5 +9,5 @@ image = "0.24"
 serde = { version = "1.0", features = ["derive"] }
 shuttle-axum = "0.22"
 shuttle-runtime = "0.22"
-tapciify = { git = "https://github.com/tapnisu/tapciify", rev = "b2d7213a9ee30f6138be22c9a88f6a55e4e77377", version = "2.0.0", default-features = false }
+tapciify = { git = "https://github.com/tapnisu/tapciify", rev = "3125d6ee0a103c48a19637fd9ea91f2e3a654293", version = "2.0.0", default-features = false }
 tokio = "1"

@@ -6,7 +6,7 @@ use axum::{
 use image::io::Reader as ImageReader;
 use serde::{Deserialize, Serialize};
 use std::io::Cursor;
-use tapciify::{AsciiConverter, AsciiArt, RawAsciiArt};
+use tapciify::{AsciiArt, AsciiConverter, RawAsciiArt};
 
 #[derive(Deserialize)]
 pub struct ConvertQuery {
@@ -44,7 +44,7 @@ struct ConvertResult {
 }
 
 #[derive(Serialize)]
-struct ConvertColoredResult {
+struct ConvertRawResult {
     data: Vec<RawAsciiImageDef>,
 }
 
@@ -84,10 +84,10 @@ async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<C
     })
 }
 
-async fn convert_colored(
+async fn convert_raw(
     query: Query<ConvertQuery>,
     mut multipart: Multipart,
-) -> Json<ConvertColoredResult> {
+) -> Json<ConvertRawResult> {
     let mut raw_ascii_images: Vec<RawAsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
@@ -109,7 +109,7 @@ async fn convert_colored(
         raw_ascii_images.push(ascii_converter.convert_raw());
     }
 
-    Json(ConvertColoredResult {
+    Json(ConvertRawResult {
         data: raw_ascii_images
             .iter()
             .map(|raw_ascii_image| RawAsciiImageDef {
@@ -136,7 +136,7 @@ async fn axum() -> shuttle_axum::ShuttleAxum {
     let app = Router::new()
         .route("/", post(root))
         .route("/convert", post(convert))
-        .route("/convert/colored", post(convert_colored));
+        .route("/convert/raw", post(convert_raw));
 
     Ok(app.into())
 }

@@ -5,7 +5,7 @@ use axum::{
 };
 use image::io::Reader as ImageReader;
 use std::io::Cursor;
-use tapciify::{AsciiConverter, RawAsciiArt};
+use tapciify::{AsciiConverter, RawAsciiArt, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
 
 pub async fn convert_raw(
     query: Query<ConvertQuery>,
@@ -26,6 +26,11 @@ pub async fn convert_raw(
             img,
             width: query.width.unwrap_or(0),
             height: query.height.unwrap_or(0),
+            ascii_string: query
+                .ascii_string
+                .clone()
+                .unwrap_or(DEFAULT_ASCII_STRING.to_owned()),
+            font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
             ..Default::default()
         };
 

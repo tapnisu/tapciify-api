@@ -5,7 +5,7 @@ use axum::{
 };
 use image::io::Reader as ImageReader;
 use std::io::Cursor;
-use tapciify::{AsciiArt, AsciiConverter};
+use tapciify::{AsciiArt, AsciiConverter, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
     let mut raw_ascii_images: Vec<AsciiArt> = vec![];
@@ -23,6 +23,11 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
             img,
             width: query.width.unwrap_or(0),
             height: query.height.unwrap_or(0),
+            ascii_string: query
+                .ascii_string
+                .clone()
+                .unwrap_or(DEFAULT_ASCII_STRING.to_owned()),
+            font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
             ..Default::default()
         };
 

@@ -1,4 +1,4 @@
-use crate::structs::{AsciiCharacterDef, ConvertQuery, ConvertRawResult, RawAsciiImageDef};
+use crate::structs::{AsciiCharacterDef, ConvertQuery, ConvertRawResult, RawAsciiArtDef};
 use axum::{
     extract::{Multipart, Query},
     Json,
@@ -40,7 +40,7 @@ pub async fn convert_raw(
     Json(ConvertRawResult {
         data: raw_ascii_images
             .iter()
-            .map(|raw_ascii_image| RawAsciiImageDef {
+            .map(|raw_ascii_image| RawAsciiArtDef {
                 characters: raw_ascii_image
                     .characters
                     .iter()

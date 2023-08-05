@@ -1,4 +1,4 @@
-use crate::structs::{AsciiImageDef, ConvertQuery, ConvertResult};
+use crate::structs::{AsciiArtDef, ConvertQuery, ConvertResult};
 use axum::{
     extract::{Multipart, Query},
     Json,
@@ -37,8 +37,8 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
     Json(ConvertResult {
         data: raw_ascii_images
             .iter()
-            .map(|raw_ascii_image| AsciiImageDef {
-                ascii_image: raw_ascii_image.text.clone(),
+            .map(|raw_ascii_image| AsciiArtDef {
+                ascii_art: raw_ascii_image.text.clone(),
                 width: raw_ascii_image.width,
                 height: raw_ascii_image.height,
             })

@@ -20,15 +20,15 @@ pub struct AsciiCharacterDef {
 }
 
 #[derive(Serialize)]
-pub struct AsciiImageDef {
-    #[serde(rename = "asciiImage")]
-    pub ascii_image: String,
+pub struct AsciiArtDef {
+    #[serde(rename = "asciiArt")]
+    pub ascii_art: String,
     pub width: u32,
     pub height: u32,
 }
 
 #[derive(Serialize)]
-pub struct RawAsciiImageDef {
+pub struct RawAsciiArtDef {
     pub characters: Vec<AsciiCharacterDef>,
     pub width: u32,
     pub height: u32,
@@ -36,10 +36,10 @@ pub struct RawAsciiImageDef {
 
 #[derive(Serialize)]
 pub struct ConvertResult {
-    pub data: Vec<AsciiImageDef>,
+    pub data: Vec<AsciiArtDef>,
 }
 
 #[derive(Serialize)]
 pub struct ConvertRawResult {
-    pub data: Vec<RawAsciiImageDef>,
+    pub data: Vec<RawAsciiArtDef>,
 }

@@ -1,11 +1,33 @@
-use crate::structs::{AsciiCharacterDef, ConvertQuery, ConvertRawResult, RawAsciiArtDef};
+use crate::query::ConvertQuery;
 use axum::{
     extract::{Multipart, Query},
     Json,
 };
 use image::io::Reader as ImageReader;
+use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{AsciiConverter, RawAsciiArt, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+
+#[derive(Serialize)]
+pub struct AsciiCharacterDef {
+    pub character: char,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
+}
+
+#[derive(Serialize)]
+pub struct RawAsciiArtDef {
+    pub characters: Vec<AsciiCharacterDef>,
+    pub width: u32,
+    pub height: u32,
+}
+
+#[derive(Serialize)]
+pub struct ConvertRawResult {
+    pub data: Vec<RawAsciiArtDef>,
+}
 
 pub async fn convert_raw(
     query: Query<ConvertQuery>,

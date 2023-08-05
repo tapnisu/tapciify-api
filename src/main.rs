@@ -1,5 +1,5 @@
+pub mod query;
 pub mod routes;
-pub mod structs;
 
 use routes::create_routes;
 

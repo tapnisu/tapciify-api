@@ -1,11 +1,25 @@
-use crate::structs::{AsciiArtDef, ConvertQuery, ConvertResult};
+use crate::query::ConvertQuery;
 use axum::{
     extract::{Multipart, Query},
     Json,
 };
 use image::io::Reader as ImageReader;
+use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{AsciiArt, AsciiConverter, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+
+#[derive(Serialize)]
+pub struct AsciiArtDef {
+    #[serde(rename = "asciiArt")]
+    pub ascii_art: String,
+    pub width: u32,
+    pub height: u32,
+}
+
+#[derive(Serialize)]
+pub struct ConvertResult {
+    pub data: Vec<AsciiArtDef>,
+}
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
     let mut raw_ascii_images: Vec<AsciiArt> = vec![];

@@ -56,7 +56,7 @@ pub async fn convert_raw(
             ..Default::default()
         };
 
-        raw_ascii_images.push(ascii_converter.convert_raw());
+        raw_ascii_images.push(ascii_converter.convert_raw().unwrap());
     }
 
     Json(ConvertRawResult {

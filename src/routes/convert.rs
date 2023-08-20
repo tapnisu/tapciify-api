@@ -45,7 +45,7 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
             ..Default::default()
         };
 
-        raw_ascii_images.push(ascii_converter.convert());
+        raw_ascii_images.push(ascii_converter.convert().unwrap());
     }
 
     Json(ConvertResult {

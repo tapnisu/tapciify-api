@@ -1,15 +1,9 @@
 mod convert;
 mod convert_raw;
-mod root;
 
-use axum::{
-    http::Method,
-    routing::{get, post},
-    Router,
-};
+use axum::{http::Method, routing::post, Router};
 use convert::convert;
 use convert_raw::convert_raw;
-use root::root;
 use tower_http::cors::{Any, CorsLayer};
 
 pub fn create_routes() -> Router {
@@ -18,7 +12,6 @@ pub fn create_routes() -> Router {
         .allow_origin(Any);
 
     let v1 = Router::new()
-        .route("/", get(root))
         .route("/convert", post(convert))
         .route("/convert/raw", post(convert_raw));
 

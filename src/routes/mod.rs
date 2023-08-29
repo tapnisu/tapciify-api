@@ -7,6 +7,7 @@ use tower_http::cors::{Any, CorsLayer};
 pub fn create_routes() -> Router {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
+        .allow_headers(Any)
         .allow_origin(Any);
 
     let v1 = api::v1::create_v1_routes();

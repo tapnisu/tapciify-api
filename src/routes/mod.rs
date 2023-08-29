@@ -17,9 +17,15 @@ pub fn create_routes() -> Router {
         .allow_methods([Method::GET, Method::POST])
         .allow_origin(Any);
 
-    Router::new()
+    let v1 = Router::new()
         .route("/", get(root))
         .route("/convert", post(convert))
-        .route("/convert/raw", post(convert_raw))
+        .route("/convert/raw", post(convert_raw));
+
+    let api = Router::new().nest("/", v1.clone()).nest("/v1", v1.clone());
+
+    Router::new()
+        .nest("/", v1.clone())
+        .nest("/api", api)
         .layer(cors)
 }

@@ -1,12 +1,9 @@
-use super::ConvertQuery;
-use axum::{
-    extract::{Multipart, Query},
-    Json,
-};
+use super::settings::Settings;
+use axum::{extract::Multipart, http::HeaderMap, Json};
 use image::io::Reader as ImageReader;
 use serde::Serialize;
 use std::io::Cursor;
-use tapciify::{AsciiConverter, RawAsciiArt, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+use tapciify::{AsciiConverter, RawAsciiArt};
 
 #[derive(Serialize)]
 pub struct AsciiCharacterDef {
@@ -29,11 +26,9 @@ pub struct ConvertRawResult {
     pub data: Vec<RawAsciiArtDef>,
 }
 
-pub async fn convert_raw(
-    query: Query<ConvertQuery>,
-    mut multipart: Multipart,
-) -> Json<ConvertRawResult> {
+pub async fn convert_raw(headers: HeaderMap, mut multipart: Multipart) -> Json<ConvertRawResult> {
     let mut raw_ascii_images: Vec<RawAsciiArt> = vec![];
+    let settings = Settings::new(headers);
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -44,21 +39,16 @@ pub async fn convert_raw(
             .decode()
             .unwrap();
 
-        let ascii_string = query
-            .ascii_string
-            .clone()
-            .unwrap_or(DEFAULT_ASCII_STRING.to_owned());
-
         let ascii_converter = AsciiConverter {
             img,
-            width: query.width.unwrap_or(0),
-            height: query.height.unwrap_or(0),
-            ascii_string: if query.reverse.unwrap_or(false) {
-                ascii_string.chars().rev().collect()
+            width: settings.width,
+            height: settings.height,
+            ascii_string: if settings.reverse {
+                settings.ascii_string.clone().chars().rev().collect()
             } else {
-                ascii_string
+                settings.ascii_string.clone()
             },
-            font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
+            font_ratio: settings.font_ratio,
             ..Default::default()
         };
 

@@ -7,6 +7,7 @@ use image::io::Reader as ImageReader;
 use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{AsciiArt, AsciiConverter, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+use urlencoding::{decode, encode};
 
 #[derive(Serialize)]
 pub struct AsciiArtDef {
@@ -23,6 +24,7 @@ pub struct ConvertResult {
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
     let mut raw_ascii_images: Vec<AsciiArt> = vec![];
+    let default_ascii_string = format!("{}", encode(DEFAULT_ASCII_STRING));
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -33,10 +35,15 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
             .decode()
             .unwrap();
 
-        let ascii_string = query
-            .ascii_string
-            .clone()
-            .unwrap_or(DEFAULT_ASCII_STRING.to_owned());
+        let ascii_string = decode(
+            query
+                .ascii_string
+                .clone()
+                .unwrap_or(default_ascii_string.clone())
+                .as_str(),
+        )
+        .unwrap()
+        .to_string();
 
         let ascii_converter = AsciiConverter {
             img,

@@ -12,4 +12,3 @@ shuttle-runtime = "0.25"
 tapciify = { version = "2", default-features = false }
 tokio = "1"
 tower-http = { version = "0.4", features = ["cors"] }
-urlencoding = "2"

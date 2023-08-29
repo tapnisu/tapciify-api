@@ -1,5 +1,4 @@
-pub mod query;
-pub mod routes;
+mod routes;
 
 use routes::create_routes;
 

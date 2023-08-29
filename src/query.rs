@@ -8,4 +8,5 @@ pub struct ConvertQuery {
     pub ascii_string: Option<String>,
     #[serde(rename = "fontRatio")]
     pub font_ratio: Option<f64>,
+    pub reverse: Option<bool>
 }

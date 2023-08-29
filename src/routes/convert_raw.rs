@@ -44,14 +44,20 @@ pub async fn convert_raw(
             .decode()
             .unwrap();
 
+        let ascii_string = query
+            .ascii_string
+            .clone()
+            .unwrap_or(DEFAULT_ASCII_STRING.to_owned());
+
         let ascii_converter = AsciiConverter {
             img,
             width: query.width.unwrap_or(0),
             height: query.height.unwrap_or(0),
-            ascii_string: query
-                .ascii_string
-                .clone()
-                .unwrap_or(DEFAULT_ASCII_STRING.to_owned()),
+            ascii_string: if query.reverse.unwrap_or(false) {
+                ascii_string.chars().rev().collect()
+            } else {
+                ascii_string
+            },
             font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
             ..Default::default()
         };

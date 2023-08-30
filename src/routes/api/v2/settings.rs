@@ -11,23 +11,35 @@ pub struct Settings {
 
 impl Settings {
     pub fn new(headers: HeaderMap) -> Self {
-        let width: u32 = headers["width"].to_str().unwrap_or("0").parse().unwrap();
-        let height: u32 = headers["height"].to_str().unwrap_or("0").parse().unwrap();
-        let ascii_string: String = headers["ascii-string"]
-            .to_str()
-            .unwrap_or(DEFAULT_ASCII_STRING)
-            .parse()
-            .unwrap();
-        let font_ratio: f64 = headers["font-ratio"]
-            .to_str()
-            .unwrap_or(&DEFAULT_FONT_RATIO.to_string())
-            .parse()
-            .unwrap();
-        let reverse: bool = headers["reverse"]
-            .to_str()
-            .unwrap_or("false")
-            .parse()
-            .unwrap();
+        let width: u32 = if headers.contains_key("width") {
+            headers["width"].to_str().unwrap().parse().unwrap()
+        } else {
+            0
+        };
+
+        let height: u32 = if headers.contains_key("height") {
+            headers["height"].to_str().unwrap().parse().unwrap()
+        } else {
+            0
+        };
+
+        let ascii_string: String = if headers.contains_key("ascii-string") {
+            headers["ascii-string"].to_str().unwrap().parse().unwrap()
+        } else {
+            DEFAULT_ASCII_STRING.to_owned()
+        };
+
+        let font_ratio: f64 = if headers.contains_key("font-ratio") {
+            headers["font-ratio"].to_str().unwrap().parse().unwrap()
+        } else {
+            DEFAULT_FONT_RATIO
+        };
+
+        let reverse: bool = if headers.contains_key("reverse") {
+            headers["reverse"].to_str().unwrap().parse().unwrap()
+        } else {
+            false
+        };
 
         Self {
             width,

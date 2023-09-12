@@ -2,10 +2,18 @@ pub mod query;
 pub mod routes;
 
 use routes::create_routes;
+use std::net::SocketAddr;
 
-#[shuttle_runtime::main]
-async fn axum() -> shuttle_axum::ShuttleAxum {
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt::init();
+
     let app = create_routes();
 
-    Ok(app.into())
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    tracing::debug!("listening on {}", addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }

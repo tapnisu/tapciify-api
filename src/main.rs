@@ -1,4 +1,3 @@
-pub mod query;
 pub mod routes;
 
 use routes::create_routes;

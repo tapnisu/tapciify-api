@@ -1,4 +1,4 @@
-use crate::routes::api::v1::query::ConvertQuery;
+use super::query::ConvertQuery;
 use axum::{
     extract::{Multipart, Query},
     Json,

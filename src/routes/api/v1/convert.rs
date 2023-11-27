@@ -22,7 +22,7 @@ pub struct ConvertResult {
 }
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
-    let mut raw_ascii_images: Vec<AsciiArt> = vec![];
+    let mut ascii_image: Vec<AsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -53,11 +53,11 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
             ..Default::default()
         };
 
-        raw_ascii_images.push(ascii_converter.convert().unwrap());
+        ascii_image.push(ascii_converter.convert().unwrap());
     }
 
     Json(ConvertResult {
-        data: raw_ascii_images
+        data: ascii_image
             .iter()
             .map(|raw_ascii_image| AsciiArtDef {
                 ascii_art: raw_ascii_image.text.clone(),

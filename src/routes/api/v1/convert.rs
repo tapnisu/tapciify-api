@@ -8,7 +8,7 @@ use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{AsciiArt, AsciiConverter, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct AsciiArtDef {
     #[serde(rename = "asciiArt")]
     pub ascii_art: String,
@@ -16,7 +16,7 @@ pub struct AsciiArtDef {
     pub height: u32,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct ConvertResult {
     pub data: Vec<AsciiArtDef>,
 }

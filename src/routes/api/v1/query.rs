@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct ConvertQuery {
     pub width: Option<u32>,
     pub height: Option<u32>,

@@ -8,7 +8,7 @@ use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{AsciiConverter, RawAsciiArt, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct AsciiCharacterDef {
     pub character: char,
     pub r: u8,
@@ -17,14 +17,14 @@ pub struct AsciiCharacterDef {
     pub a: u8,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct RawAsciiArtDef {
     pub characters: Vec<AsciiCharacterDef>,
     pub width: u32,
     pub height: u32,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct ConvertRawResult {
     pub data: Vec<RawAsciiArtDef>,
 }

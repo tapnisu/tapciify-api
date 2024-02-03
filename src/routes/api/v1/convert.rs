@@ -35,7 +35,7 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
 
         let ascii_string = query
             .ascii_string
-            .clone()
+            .to_owned()
             .map_or(DEFAULT_ASCII_STRING.to_owned(), |encoded| {
                 urlencoding::decode(&encoded).unwrap().into_owned()
             });
@@ -60,7 +60,7 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
         data: ascii_image
             .iter()
             .map(|raw_ascii_image| AsciiArtDef {
-                ascii_art: raw_ascii_image.text.clone(),
+                ascii_art: raw_ascii_image.text.to_owned(),
                 width: raw_ascii_image.width,
                 height: raw_ascii_image.height,
             })

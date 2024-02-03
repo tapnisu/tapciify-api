@@ -46,7 +46,7 @@ pub async fn convert_raw(
 
         let ascii_string = query
             .ascii_string
-            .clone()
+            .to_owned()
             .map_or(DEFAULT_ASCII_STRING.to_owned(), |encoded| {
                 urlencoding::decode(&encoded).unwrap().into_owned()
             });

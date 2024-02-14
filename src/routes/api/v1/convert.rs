@@ -19,13 +19,23 @@ pub struct AsciiArtDef {
     pub height: u32,
 }
 
+impl From<AsciiArt> for AsciiArtDef {
+    fn from(a: AsciiArt) -> AsciiArtDef {
+        AsciiArtDef {
+            ascii_art: a.to_string(),
+            width: a.width,
+            height: a.height,
+        }
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
 pub struct ConvertResult {
     pub data: Vec<AsciiArtDef>,
 }
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
-    let mut ascii_image: Vec<AsciiArt> = vec![];
+    let mut ascii_arts: Vec<AsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -60,17 +70,13 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
             })
             .unwrap();
 
-        ascii_image.push(ascii_art);
+        ascii_arts.push(ascii_art);
     }
 
     Json(ConvertResult {
-        data: ascii_image
+        data: ascii_arts
             .iter()
-            .map(|raw_ascii_image| AsciiArtDef {
-                ascii_art: raw_ascii_image.to_string(),
-                width: raw_ascii_image.width,
-                height: raw_ascii_image.height,
-            })
+            .map(|ascii_art| ascii_art.to_owned().into())
             .collect(),
     })
 }

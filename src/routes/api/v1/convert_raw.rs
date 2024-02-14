@@ -7,8 +7,8 @@ use image::{imageops::FilterType, io::Reader as ImageReader};
 use serde::Serialize;
 use std::io::Cursor;
 use tapciify::{
-    AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, CustomRatioResize, DEFAULT_ASCII_STRING,
-    DEFAULT_FONT_RATIO,
+    AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, AsciiArtPixel, CustomRatioResize,
+    DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO,
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -20,11 +20,33 @@ pub struct AsciiCharacterDef {
     pub a: u8,
 }
 
+impl From<AsciiArtPixel> for AsciiCharacterDef {
+    fn from(p: AsciiArtPixel) -> AsciiCharacterDef {
+        AsciiCharacterDef {
+            character: p.character,
+            r: p.r,
+            g: p.g,
+            b: p.b,
+            a: p.a,
+        }
+    }
+}
+
 #[derive(Serialize, Debug, Clone)]
 pub struct RawAsciiArtDef {
     pub characters: Vec<AsciiCharacterDef>,
     pub width: u32,
     pub height: u32,
+}
+
+impl From<AsciiArt> for RawAsciiArtDef {
+    fn from(a: AsciiArt) -> RawAsciiArtDef {
+        RawAsciiArtDef {
+            characters: a.characters.iter().map(|c| c.to_owned().into()).collect(),
+            width: a.width,
+            height: a.height,
+        }
+    }
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -36,7 +58,7 @@ pub async fn convert_raw(
     query: Query<ConvertQuery>,
     mut multipart: Multipart,
 ) -> Json<ConvertRawResult> {
-    let mut raw_ascii_images: Vec<AsciiArt> = vec![];
+    let mut ascii_arts: Vec<AsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -71,27 +93,13 @@ pub async fn convert_raw(
             })
             .unwrap();
 
-        raw_ascii_images.push(ascii_art);
+        ascii_arts.push(ascii_art);
     }
 
     Json(ConvertRawResult {
-        data: raw_ascii_images
+        data: ascii_arts
             .iter()
-            .map(|raw_ascii_image| RawAsciiArtDef {
-                characters: raw_ascii_image
-                    .characters
-                    .iter()
-                    .map(|ascii_character| AsciiCharacterDef {
-                        character: ascii_character.character,
-                        r: ascii_character.r,
-                        g: ascii_character.g,
-                        b: ascii_character.b,
-                        a: ascii_character.a,
-                    })
-                    .collect(),
-                width: raw_ascii_image.width,
-                height: raw_ascii_image.height,
-            })
+            .map(|ascii_art| ascii_art.to_owned().into())
             .collect(),
     })
 }

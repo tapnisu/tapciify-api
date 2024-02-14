@@ -3,10 +3,13 @@ use axum::{
     extract::{Multipart, Query},
     Json,
 };
-use image::io::Reader as ImageReader;
+use image::{imageops::FilterType, io::Reader as ImageReader};
 use serde::Serialize;
 use std::io::Cursor;
-use tapciify::{AsciiArt, AsciiConverter, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+use tapciify::{
+    AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, CustomRatioResize, DEFAULT_ASCII_STRING,
+    DEFAULT_FONT_RATIO,
+};
 
 #[derive(Serialize, Debug, Clone)]
 pub struct AsciiArtDef {
@@ -40,27 +43,31 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Js
                 urlencoding::decode(&encoded).unwrap().into_owned()
             });
 
-        let ascii_converter = AsciiConverter {
-            img,
-            width: query.width.unwrap_or(0),
-            height: query.height.unwrap_or(0),
-            ascii_string: if query.reverse.unwrap_or(false) {
-                ascii_string.chars().rev().collect()
-            } else {
-                ascii_string
-            },
-            font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
-            ..Default::default()
-        };
+        let ascii_art = img
+            .resize_custom_ratio(
+                query.width,
+                query.height,
+                query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
+                FilterType::Triangle,
+            )
+            .ascii_art(&AsciiArtConverterOptions {
+                ascii_string: if query.reverse.unwrap_or(false) {
+                    ascii_string.chars().rev().collect()
+                } else {
+                    ascii_string
+                },
+                colored: true,
+            })
+            .unwrap();
 
-        ascii_image.push(ascii_converter.convert().unwrap());
+        ascii_image.push(ascii_art);
     }
 
     Json(ConvertResult {
         data: ascii_image
             .iter()
             .map(|raw_ascii_image| AsciiArtDef {
-                ascii_art: raw_ascii_image.text.to_owned(),
+                ascii_art: raw_ascii_image.to_string(),
                 width: raw_ascii_image.width,
                 height: raw_ascii_image.height,
             })

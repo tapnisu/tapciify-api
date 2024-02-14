@@ -3,10 +3,13 @@ use axum::{
     extract::{Multipart, Query},
     Json,
 };
-use image::io::Reader as ImageReader;
+use image::{imageops::FilterType, io::Reader as ImageReader};
 use serde::Serialize;
 use std::io::Cursor;
-use tapciify::{AsciiConverter, RawAsciiArt, DEFAULT_ASCII_STRING, DEFAULT_FONT_RATIO};
+use tapciify::{
+    AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, CustomRatioResize, DEFAULT_ASCII_STRING,
+    DEFAULT_FONT_RATIO,
+};
 
 #[derive(Serialize, Debug, Clone)]
 pub struct AsciiCharacterDef {
@@ -33,7 +36,7 @@ pub async fn convert_raw(
     query: Query<ConvertQuery>,
     mut multipart: Multipart,
 ) -> Json<ConvertRawResult> {
-    let mut raw_ascii_images: Vec<RawAsciiArt> = vec![];
+    let mut raw_ascii_images: Vec<AsciiArt> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let data = field.bytes().await.unwrap();
@@ -51,20 +54,24 @@ pub async fn convert_raw(
                 urlencoding::decode(&encoded).unwrap().into_owned()
             });
 
-        let ascii_converter = AsciiConverter {
-            img,
-            width: query.width.unwrap_or(0),
-            height: query.height.unwrap_or(0),
-            ascii_string: if query.reverse.unwrap_or(false) {
-                ascii_string.chars().rev().collect()
-            } else {
-                ascii_string
-            },
-            font_ratio: query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
-            ..Default::default()
-        };
+        let ascii_art = img
+            .resize_custom_ratio(
+                query.width,
+                query.height,
+                query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
+                FilterType::Triangle,
+            )
+            .ascii_art(&AsciiArtConverterOptions {
+                ascii_string: if query.reverse.unwrap_or(false) {
+                    ascii_string.chars().rev().collect()
+                } else {
+                    ascii_string
+                },
+                colored: true,
+            })
+            .unwrap();
 
-        raw_ascii_images.push(ascii_converter.convert_raw().unwrap());
+        raw_ascii_images.push(ascii_art);
     }
 
     Json(ConvertRawResult {

@@ -54,11 +54,16 @@ pub struct ConvertRawResult {
 pub async fn convert_raw(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
     let mut ascii_arts: Vec<AsciiArt> = vec![];
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
+    while let Some(field) = match multipart.next_field().await {
+        Ok(fields) => fields,
+        Err(e) => {
+            return (StatusCode::BAD_REQUEST, format!("Multipart error: {}", e)).into_response()
+        }
+    } {
         let bytes = match field.bytes().await {
             Ok(bytes) => bytes,
             Err(e) => {
-                return (StatusCode::BAD_REQUEST, format!("Multipart error: {}", e)).into_response()
+                return (StatusCode::BAD_REQUEST, format!("Reading image error: {}", e)).into_response()
             }
         };
 

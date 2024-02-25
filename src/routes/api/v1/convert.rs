@@ -1,15 +1,12 @@
-use super::utils::ConvertQuery;
+use super::utils::{bytes_to_ascii, ConvertQuery};
 use axum::{
     extract::{Multipart, Query},
+    http::StatusCode,
+    response::{IntoResponse, Response},
     Json,
 };
-use image::{imageops::FilterType, io::Reader as ImageReader};
 use serde::Serialize;
-use std::io::Cursor;
-use tapciify::{
-    AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, CustomRatioResize, DEFAULT_ASCII_STRING,
-    DEFAULT_FONT_RATIO,
-};
+use tapciify::AsciiArt;
 
 #[derive(Serialize, Debug, Clone)]
 pub struct AsciiArtDef {
@@ -34,49 +31,46 @@ pub struct ConvertResult {
     pub data: Vec<AsciiArtDef>,
 }
 
-pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Json<ConvertResult> {
+pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
     let mut ascii_arts: Vec<AsciiArt> = vec![];
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let data = field.bytes().await.unwrap();
+    while let Some(field) = match multipart.next_field().await {
+        Ok(fields) => fields,
+        Err(e) => {
+            return (StatusCode::BAD_REQUEST, format!("Multipart error: {}", e)).into_response()
+        }
+    } {
+        let bytes = match field.bytes().await {
+            Ok(bytes) => bytes,
+            Err(e) => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    format!("Reading image error: {}", e),
+                )
+                    .into_response()
+            }
+        };
 
-        let img = ImageReader::new(Cursor::new(data))
-            .with_guessed_format()
-            .unwrap()
-            .decode()
-            .unwrap();
-
-        let ascii_string = query
-            .ascii_string
-            .to_owned()
-            .map_or(DEFAULT_ASCII_STRING.to_owned(), |encoded| {
-                urlencoding::decode(&encoded).unwrap().into_owned()
-            });
-
-        let ascii_art = img
-            .resize_custom_ratio(
-                query.width,
-                query.height,
-                query.font_ratio.unwrap_or(DEFAULT_FONT_RATIO),
-                FilterType::Triangle,
-            )
-            .ascii_art(&AsciiArtConverterOptions {
-                ascii_string: if query.reverse.unwrap_or(false) {
-                    ascii_string.chars().rev().collect()
-                } else {
-                    ascii_string
-                },
-                colored: true,
-            })
-            .unwrap();
+        let ascii_art = match bytes_to_ascii(&bytes, &query) {
+            Ok(ascii_art) => ascii_art,
+            Err(e) => {
+                return (
+                    StatusCode::BAD_REQUEST,
+                    format!("ASCII art conversion error: {}", e),
+                )
+                    .into_response()
+            }
+        };
 
         ascii_arts.push(ascii_art);
     }
 
-    Json(ConvertResult {
-        data: ascii_arts
-            .iter()
-            .map(|ascii_art| ascii_art.to_owned().into())
-            .collect(),
-    })
+    let data = ascii_arts
+        .iter()
+        .map(|ascii_art| ascii_art.to_owned().into())
+        .collect();
+
+    let body = Json(ConvertResult { data });
+
+    (StatusCode::OK, body).into_response()
 }

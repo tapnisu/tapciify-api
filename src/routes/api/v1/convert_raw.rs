@@ -8,49 +8,6 @@ use axum::{
 use serde::Serialize;
 use tapciify::{AsciiArt, AsciiArtPixel};
 
-#[derive(Serialize, Debug, Clone)]
-pub struct AsciiCharacterDef {
-    pub character: char,
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-    pub a: u8,
-}
-
-impl From<AsciiArtPixel> for AsciiCharacterDef {
-    fn from(p: AsciiArtPixel) -> AsciiCharacterDef {
-        AsciiCharacterDef {
-            character: p.character,
-            r: p.r,
-            g: p.g,
-            b: p.b,
-            a: p.a,
-        }
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub struct RawAsciiArtDef {
-    pub characters: Vec<AsciiCharacterDef>,
-    pub width: u32,
-    pub height: u32,
-}
-
-impl From<AsciiArt> for RawAsciiArtDef {
-    fn from(a: AsciiArt) -> RawAsciiArtDef {
-        RawAsciiArtDef {
-            characters: a.characters.iter().map(|c| c.to_owned().into()).collect(),
-            width: a.width,
-            height: a.height,
-        }
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub struct ConvertRawResult {
-    pub data: Vec<RawAsciiArtDef>,
-}
-
 pub async fn convert_raw(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
     let mut ascii_arts: Vec<AsciiArt> = vec![];
 
@@ -63,7 +20,11 @@ pub async fn convert_raw(query: Query<ConvertQuery>, mut multipart: Multipart) -
         let bytes = match field.bytes().await {
             Ok(bytes) => bytes,
             Err(e) => {
-                return (StatusCode::BAD_REQUEST, format!("Reading image error: {}", e)).into_response()
+                return (
+                    StatusCode::BAD_REQUEST,
+                    format!("Reading image error: {}", e),
+                )
+                    .into_response()
             }
         };
 
@@ -89,4 +50,47 @@ pub async fn convert_raw(query: Query<ConvertQuery>, mut multipart: Multipart) -
     let body = Json(ConvertRawResult { data });
 
     (StatusCode::OK, body).into_response()
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct ConvertRawResult {
+    pub data: Vec<RawAsciiArtDef>,
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct RawAsciiArtDef {
+    pub characters: Vec<AsciiCharacterDef>,
+    pub width: u32,
+    pub height: u32,
+}
+
+impl From<AsciiArt> for RawAsciiArtDef {
+    fn from(a: AsciiArt) -> RawAsciiArtDef {
+        RawAsciiArtDef {
+            characters: a.characters.iter().map(|c| c.to_owned().into()).collect(),
+            width: a.width,
+            height: a.height,
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct AsciiCharacterDef {
+    pub character: char,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
+}
+
+impl From<AsciiArtPixel> for AsciiCharacterDef {
+    fn from(p: AsciiArtPixel) -> AsciiCharacterDef {
+        AsciiCharacterDef {
+            character: p.character,
+            r: p.r,
+            g: p.g,
+            b: p.b,
+            a: p.a,
+        }
+    }
 }

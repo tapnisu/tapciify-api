@@ -8,29 +8,6 @@ use axum::{
 use serde::Serialize;
 use tapciify::AsciiArt;
 
-#[derive(Serialize, Debug, Clone)]
-pub struct AsciiArtDef {
-    #[serde(rename = "asciiArt")]
-    pub ascii_art: String,
-    pub width: u32,
-    pub height: u32,
-}
-
-impl From<AsciiArt> for AsciiArtDef {
-    fn from(a: AsciiArt) -> AsciiArtDef {
-        AsciiArtDef {
-            ascii_art: a.to_string(),
-            width: a.width,
-            height: a.height,
-        }
-    }
-}
-
-#[derive(Serialize, Debug, Clone)]
-pub struct ConvertResult {
-    pub data: Vec<AsciiArtDef>,
-}
-
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
     let mut ascii_arts: Vec<AsciiArt> = vec![];
 
@@ -73,4 +50,27 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
     let body = Json(ConvertResult { data });
 
     (StatusCode::OK, body).into_response()
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct ConvertResult {
+    pub data: Vec<AsciiArtDef>,
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub struct AsciiArtDef {
+    #[serde(rename = "asciiArt")]
+    pub ascii_art: String,
+    pub width: u32,
+    pub height: u32,
+}
+
+impl From<AsciiArt> for AsciiArtDef {
+    fn from(a: AsciiArt) -> AsciiArtDef {
+        AsciiArtDef {
+            ascii_art: a.to_string(),
+            width: a.width,
+            height: a.height,
+        }
+    }
 }

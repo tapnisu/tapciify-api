@@ -17,7 +17,8 @@ pub fn create_routes() -> Router {
             "/",
             get(|| async { Redirect::permanent("https://github.com/tapciify/api") }),
         )
-        .nest("/", v1)
+        .nest("/", v1.to_owned())
+        .nest("/v1", v1)
         .nest("/api", api)
         .layer(cors)
 }

@@ -28,7 +28,7 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
             }
         };
 
-        let ascii_art = match bytes_to_ascii(&bytes, &query) {
+        let ascii_art = match bytes_to_ascii(&bytes, &query, false) {
             Ok(ascii_art) => ascii_art,
             Err(e) => {
                 return (

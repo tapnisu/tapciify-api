@@ -19,7 +19,11 @@ pub struct ConvertQuery {
     pub reverse: Option<bool>,
 }
 
-pub fn bytes_to_ascii(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<AsciiArt> {
+pub fn bytes_to_ascii(
+    bytes: &Bytes,
+    query: &Query<ConvertQuery>,
+    colored: bool,
+) -> Result<AsciiArt> {
     let img = ImageReader::new(Cursor::new(bytes))
         .with_guessed_format()?
         .decode()?;
@@ -42,7 +46,7 @@ pub fn bytes_to_ascii(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<Asci
             } else {
                 ascii_string
             },
-            colored: true,
+            colored,
         })?;
 
     Ok(ascii_art)

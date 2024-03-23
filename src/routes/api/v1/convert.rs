@@ -42,6 +42,10 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
         ascii_arts.push(ascii_art);
     }
 
+    if ascii_arts.is_empty() {
+        return (StatusCode::BAD_REQUEST, "No images were passed").into_response();
+    }
+
     let data = ascii_arts
         .iter()
         .map(|ascii_art| ascii_art.to_owned().into())

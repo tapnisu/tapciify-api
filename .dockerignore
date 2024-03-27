@@ -17,4 +17,4 @@ Cargo.lock
 .gitignore
 Dockerfile
 LICENSE
-README
+README.md

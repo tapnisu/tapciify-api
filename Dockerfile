@@ -10,5 +10,5 @@ FROM debian:bookworm-slim
 COPY --from=builder /usr/src/tapciify-api/target/release/tapciify-api /usr/local/bin/tapciify-api
 
 CMD ["tapciify-api"]
-
+ENV PORT=3000
 EXPOSE 3000

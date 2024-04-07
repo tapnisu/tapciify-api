@@ -29,10 +29,10 @@ pub fn bytes_to_ascii(
         .with_guessed_format()?
         .decode()?;
 
-    let ascii_string = query.ascii_string.to_owned().map_or(
-        Ok(DEFAULT_ASCII_STRING.to_owned()),
-        |encoded| -> Result<String> { Ok(urlencoding::decode(&encoded)?.into_owned()) },
-    )?;
+    let ascii_string = match query.ascii_string.to_owned() {
+        Some(ascii_string) => urlencoding::decode(&ascii_string)?.into_owned(),
+        None => DEFAULT_ASCII_STRING.to_owned()
+    };
 
     let ascii_art = img
         .resize_custom_ratio(
@@ -42,10 +42,9 @@ pub fn bytes_to_ascii(
             FilterType::Triangle,
         )
         .ascii_art(&AsciiArtConverterOptions {
-            ascii_string: if query.reverse.unwrap_or(false) {
-                ascii_string.chars().rev().collect()
-            } else {
-                ascii_string
+            ascii_string: match query.reverse.unwrap_or(false) {
+                true => ascii_string.chars().rev().collect(),
+                false => ascii_string
             },
             colored,
         })?;

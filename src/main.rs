@@ -1,7 +1,8 @@
-pub mod routes;
+use std::env;
 
 use routes::create_routes;
-use std::env;
+
+pub mod routes;
 
 #[tokio::main]
 async fn main() {

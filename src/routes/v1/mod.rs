@@ -3,7 +3,7 @@ use axum::extract::{Multipart, Query};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
-use tapciify::AsciiArt;
+use tapciify::{AsciiArt, AsciiArtPixel};
 
 use crate::routes::v1::utils::{bytes_to_ascii, ConvertQuery};
 

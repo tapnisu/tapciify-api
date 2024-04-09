@@ -35,7 +35,7 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
             }
         };
 
-        let ascii_art = match bytes_to_ascii(&bytes, &query, false) {
+        let ascii_art = match bytes_to_ascii(&bytes, &query) {
             Ok(ascii_art) => ascii_art,
             Err(e) => {
                 return (
@@ -106,7 +106,7 @@ pub async fn convert_raw(query: Query<ConvertQuery>, mut multipart: Multipart) -
             }
         };
 
-        let ascii_art = match bytes_to_ascii(&bytes, &query, true) {
+        let ascii_art = match bytes_to_ascii(&bytes, &query) {
             Ok(ascii_art) => ascii_art,
             Err(e) => {
                 return (
@@ -172,4 +172,3 @@ impl From<AsciiArtPixel> for AsciiCharacterDef {
         }
     }
 }
-

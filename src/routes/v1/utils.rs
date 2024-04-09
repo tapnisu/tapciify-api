@@ -18,20 +18,17 @@ pub struct ConvertQuery {
     #[serde(rename = "fontRatio")]
     pub font_ratio: Option<f64>,
     pub reverse: Option<bool>,
+    pub colored: Option<bool>,
 }
 
-pub fn bytes_to_ascii(
-    bytes: &Bytes,
-    query: &Query<ConvertQuery>,
-    colored: bool,
-) -> Result<AsciiArt> {
+pub fn bytes_to_ascii(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<AsciiArt> {
     let img = ImageReader::new(Cursor::new(bytes))
         .with_guessed_format()?
         .decode()?;
 
     let ascii_string = match query.ascii_string.to_owned() {
         Some(ascii_string) => urlencoding::decode(&ascii_string)?.into_owned(),
-        None => DEFAULT_ASCII_STRING.to_owned()
+        None => DEFAULT_ASCII_STRING.to_owned(),
     };
 
     let ascii_art = img
@@ -44,9 +41,9 @@ pub fn bytes_to_ascii(
         .ascii_art(&AsciiArtConverterOptions {
             ascii_string: match query.reverse.unwrap_or(false) {
                 true => ascii_string.chars().rev().collect(),
-                false => ascii_string
+                false => ascii_string,
             },
-            colored,
+            colored: query.colored.unwrap_or(false),
         })?;
 
     Ok(ascii_art)

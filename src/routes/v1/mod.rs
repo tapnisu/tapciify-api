@@ -1,5 +1,5 @@
 use axum::{Json, Router, routing::post};
-use axum::extract::{Multipart, Query};
+use axum::extract::{DefaultBodyLimit, Multipart, Query};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
@@ -13,6 +13,7 @@ pub fn create_v1_routes() -> Router {
     Router::new()
         .route("/convert", post(convert))
         .route("/convert/raw", post(convert_raw))
+        .layer(DefaultBodyLimit::max(4 * 1024))
 }
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {

@@ -6,9 +6,9 @@ use v1::create_v1_routes;
 mod v1;
 
 pub fn create_routes() -> Router {
-    let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST])
-        .allow_origin(Any);
+    // let cors = CorsLayer::new()
+    //     .allow_methods([Method::GET, Method::POST])
+    //     .allow_origin(Any);
 
     let v1_routes = create_v1_routes();
 
@@ -20,5 +20,5 @@ pub fn create_routes() -> Router {
         .nest("/", v1_routes.to_owned())
         .nest("/v1", v1_routes.to_owned())
         .nest("/api/v1", v1_routes)
-        .layer(cors)
+        // .layer(cors)
 }

@@ -5,7 +5,7 @@ use axum::response::{IntoResponse, Response};
 use serde::Serialize;
 use tapciify::{AsciiArt, AsciiArtPixel};
 
-use crate::routes::v1::utils::{bytes_to_ascii, ConvertQuery};
+use utils::{bytes_to_ascii, ConvertQuery};
 
 mod utils;
 

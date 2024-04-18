@@ -1,14 +1,10 @@
 use std::env;
 
-use routes::create_routes;
-
-pub mod routes;
-
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let app = create_routes();
+    let app = tapciify_api::create_routes();
 
     let port = env::var("PORT").map_or(3000, |port| port.parse().unwrap());
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))

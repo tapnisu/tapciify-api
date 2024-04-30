@@ -1,5 +1,4 @@
-use axum::{http::Method, response::Redirect, routing::get, Router};
-use tower_http::cors::{Any, CorsLayer};
+use axum::{response::Redirect, routing::get, Router};
 
 use v1::create_v1_routes;
 

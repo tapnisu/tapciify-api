@@ -1,18 +1,19 @@
 use axum::extract::{DefaultBodyLimit, Multipart, Query};
-use axum::http::StatusCode;
+use axum::http::{Method, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::{routing::post, Json, Router};
 use serde::Serialize;
 use tapciify::{AsciiArt, AsciiArtPixel};
+use tower_http::cors;
 
 use utils::{bytes_to_ascii, ConvertQuery};
 
 mod utils;
 
 pub fn create_v1_routes() -> Router {
-    let cors = CorsLayer::new()
+    let cors = cors::CorsLayer::new()
         .allow_methods([Method::GET, Method::POST])
-        .allow_origin(Any);
+        .allow_origin(cors::Any);
 
     Router::new()
         .route("/convert", post(convert))

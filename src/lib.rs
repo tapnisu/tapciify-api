@@ -1,10 +1,14 @@
-use axum::{response::Redirect, routing::get, Router};
+use axum::{http::Method, response::Redirect, routing::get, Router};
 
+use tower_http::cors;
 use v1::create_v1_routes;
 
 mod v1;
 
 pub fn create_routes() -> Router {
+    let cors = cors::CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST])
+        .allow_origin(cors::Any);
     let v1_routes = create_v1_routes();
 
     Router::new()
@@ -15,4 +19,5 @@ pub fn create_routes() -> Router {
         .nest("/", v1_routes.to_owned())
         .nest("/v1", v1_routes.to_owned())
         .nest("/api/v1", v1_routes)
+        .layer(cors)
 }

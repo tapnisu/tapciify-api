@@ -20,41 +20,56 @@ paths:
                 image:
                   type: string
                   format: binary
-                  description: The image file to be converted to ASCII art.
-                width:
-                  type: integer
-                  format: int32
-                  description: Width for the output image.
-                height:
-                  type: integer
-                  format: int32
-                  description: Height for the output image.
-                asciiString:
-                  type: string
-                  description: String to use when generating ASCII art.
-                fontRatio:
-                  type: number
-                  format: float
-                  description: Font ratio when generating height/width.
-                reverse:
-                  type: boolean
-                  description: Reverse the ASCII string.
-                colored:
-                  type: boolean
-                  description: Make the image colored.
+                  description: The image file to be converted to ASCII art
+            encoding:
+              image:
+                contentType: image
+      parameters:
+        - in: query
+          name: width
+          schema:
+            type: integer
+            format: int32
+          description: Width for output ASCII art
+        - in: query
+          name: height
+          schema:
+            type: integer
+            format: int32
+          description: Height for output ASCII art
+        - in: query
+          name: asciiString
+          schema:
+            type: string
+            description: String to represent lightness of pixels
+        - in: query
+          name: fontRatio
+          schema:
+            type: number
+            format: float
+          description: Font ratio to use when generating width/height
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: Reverses the ASCII string
+        - in: query
+          name: colored
+          schema:
+            type: boolean
+          description: Makes the ASCII art colored
       responses:
-        '200':
+        "200":
           description: ASCII art generated successfully.
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                description: The generated ASCII art.
+                $ref: "#/components/schemas/ConvertResult"
 
   /convert/raw:
     post:
       summary: Generate raw ASCII art
-      description: Converts an image to raw ASCII art with optional parameters.
+      description: Converts an image to raw ASCII art
       requestBody:
         required: true
         content:
@@ -65,39 +80,110 @@ paths:
                 image:
                   type: string
                   format: binary
-                  description: The image file to be converted to raw ASCII art.
-                width:
-                  type: integer
-                  format: int32
-                  description: Width for the output image.
-                height:
-                  type: integer
-                  format: int32
-                  description: Height for the output image.
-                asciiString:
-                  type: string
-                  description: String to use when generating ASCII art.
-                fontRatio:
-                  type: number
-                  format: float
-                  description: Font ratio when generating height/width.
-                reverse:
-                  type: boolean
-                  description: Reverse the ASCII string.
-                colored:
-                  type: boolean
-                  description: Make the image colored.
+                  description: The image file to be converted to raw ASCII art
+            encoding:
+              image:
+                contentType: image
+      parameters:
+        - in: query
+          name: width
+          schema:
+            type: integer
+            format: int32
+          description: Width for output ASCII art
+        - in: query
+          name: height
+          schema:
+            type: integer
+            format: int32
+          description: Height for output ASCII art
+        - in: query
+          name: asciiString
+          schema:
+            type: string
+            description: String to represent lightness of pixels
+        - in: query
+          name: fontRatio
+          schema:
+            type: number
+            format: float
+          description: Font ratio to use when generating width/height
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: Reverses the ASCII string
+        - in: query
+          name: colored
+          schema:
+            type: boolean
+          description: Makes the ASCII art colored
       responses:
-        '200':
+        "200":
           description: Raw ASCII art generated successfully.
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                description: The generated raw ASCII art.
+                $ref: "#/components/schemas/ConvertRawResult"
 
 components:
   schemas:
+    ConvertResult:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AsciiArtDef"
+    AsciiArtDef:
+      type: object
+      properties:
+        asciiArt:
+          type: string
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+    ConvertRawResult:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RawAsciiArtDef"
+    RawAsciiArtDef:
+      type: object
+      properties:
+        characters:
+          type: array
+          items:
+            $ref: "#/components/schemas/AsciiCharacterDef"
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+    AsciiCharacterDef:
+      type: object
+      properties:
+        character:
+          type: string
+          maxLength: 1
+        r:
+          type: integer
+          format: int32
+        g:
+          type: integer
+          format: int32
+        b:
+          type: integer
+          format: int32
+        a:
+          type: integer
+          format: int32
     Error:
       type: object
       properties:

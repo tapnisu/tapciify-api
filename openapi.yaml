@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: Tapciify API
+  description:
+  version: 0.1.3
+servers:
+  - url: https://api.tapciify.ru/v1
+paths:
+  /convert:
+    post:
+      summary: Generate ASCII art
+      description: Converts an image to ASCII art with optional parameters.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to be converted to ASCII art.
+                width:
+                  type: integer
+                  format: int32
+                  description: Width for the output image.
+                height:
+                  type: integer
+                  format: int32
+                  description: Height for the output image.
+                asciiString:
+                  type: string
+                  description: String to use when generating ASCII art.
+                fontRatio:
+                  type: number
+                  format: float
+                  description: Font ratio when generating height/width.
+                reverse:
+                  type: boolean
+                  description: Reverse the ASCII string.
+                colored:
+                  type: boolean
+                  description: Make the image colored.
+      responses:
+        '200':
+          description: ASCII art generated successfully.
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: The generated ASCII art.
+
+  /convert/raw:
+    post:
+      summary: Generate raw ASCII art
+      description: Converts an image to raw ASCII art with optional parameters.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to be converted to raw ASCII art.
+                width:
+                  type: integer
+                  format: int32
+                  description: Width for the output image.
+                height:
+                  type: integer
+                  format: int32
+                  description: Height for the output image.
+                asciiString:
+                  type: string
+                  description: String to use when generating ASCII art.
+                fontRatio:
+                  type: number
+                  format: float
+                  description: Font ratio when generating height/width.
+                reverse:
+                  type: boolean
+                  description: Reverse the ASCII string.
+                colored:
+                  type: boolean
+                  description: Make the image colored.
+      responses:
+        '200':
+          description: Raw ASCII art generated successfully.
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: The generated raw ASCII art.
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string

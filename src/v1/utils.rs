@@ -1,9 +1,8 @@
-use std::io::Cursor;
-
 use anyhow::Result;
 use axum::{body::Bytes, extract::Query};
 use image::{imageops::FilterType, io::Reader as ImageReader};
 use serde::Deserialize;
+use std::io::Cursor;
 use tapciify::{
     AsciiArt, AsciiArtConverter, AsciiArtConverterOptions, CustomRatioResize, DEFAULT_ASCII_STRING,
     DEFAULT_FONT_RATIO,

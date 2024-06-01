@@ -53,11 +53,6 @@ paths:
           schema:
             type: boolean
           description: Reverses the ASCII string
-        - in: query
-          name: colored
-          schema:
-            type: boolean
-          description: Makes the ASCII art colored
       responses:
         "200":
           description: ASCII art generated successfully.

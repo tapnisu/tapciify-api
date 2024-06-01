@@ -129,8 +129,8 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/AsciiArtDef"
-    AsciiArtDef:
+            $ref: "#/components/schemas/AsciiArt"
+    AsciiArt:
       type: object
       properties:
         asciiArt:
@@ -147,21 +147,21 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/RawAsciiArtDef"
-    RawAsciiArtDef:
+            $ref: "#/components/schemas/RawAsciiArt"
+    RawAsciiArt:
       type: object
       properties:
         characters:
           type: array
           items:
-            $ref: "#/components/schemas/AsciiCharacterDef"
+            $ref: "#/components/schemas/AsciiCharacter"
         width:
           type: integer
           format: int32
         height:
           type: integer
           format: int32
-    AsciiCharacterDef:
+    AsciiCharacter:
       type: object
       properties:
         character:

@@ -1,0 +1,203 @@
+openapi: 3.0.0
+info:
+  title: Tapciify API
+  description: API wrapper for tapciify
+  version: 0.2.0
+servers:
+  - url: https://api.tapciify.ru/v1
+tags:
+  - name: ASCII art generation
+paths:
+  /convert:
+    post:
+      summary: Generate ASCII art
+      description: Converts an image to ASCII art with optional parameters.
+      tags:
+        - ASCII art generation
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to be converted to ASCII art
+            encoding:
+              image:
+                contentType: image
+      parameters:
+        - in: query
+          name: width
+          example: 64
+          schema:
+            type: integer
+            format: int32
+          description: Width for output ASCII art
+        - in: query
+          name: height
+          schema:
+            type: integer
+            format: int32
+          description: Height for output ASCII art
+        - in: query
+          name: asciiString
+          schema:
+            type: string
+            description: String to represent lightness of pixels
+        - in: query
+          name: fontRatio
+          schema:
+            type: number
+            format: float
+          description: Font ratio to use when generating width/height
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: Reverses the ASCII string
+      responses:
+        "200":
+          description: ASCII art generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConvertResult"
+
+  /convert/raw:
+    post:
+      summary: Generate raw ASCII art
+      description: Converts an image to raw ASCII art
+      tags:
+        - ASCII art generation
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: The image file to be converted to raw ASCII art
+            encoding:
+              image:
+                contentType: image
+      parameters:
+        - in: query
+          name: width
+          example: 64
+          schema:
+            type: integer
+            format: int32
+          description: Width for output ASCII art
+        - in: query
+          name: height
+          schema:
+            type: integer
+            format: int32
+          description: Height for output ASCII art
+        - in: query
+          name: asciiString
+          schema:
+            type: string
+            description: String to represent lightness of pixels
+        - in: query
+          name: fontRatio
+          schema:
+            type: number
+            format: float
+          description: Font ratio to use when generating width/height
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: Reverses the ASCII string
+        - in: query
+          name: colored
+          schema:
+            type: boolean
+          description: Makes the ASCII art colored
+      responses:
+        "200":
+          description: Raw ASCII art generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConvertRawResult"
+
+components:
+  schemas:
+    ConvertResult:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AsciiArt"
+    AsciiArt:
+      type: object
+      properties:
+        asciiArt:
+          type: string
+          example: "....................,,,:;;;;;;;;;;;;;;::,,,.....................\n.................,,,:::;;;;;;;;;;;;;;;;;;;:,....................\n...............,,::,::;;;;;;:;::;;;;;;;;;;;;:,..................\n..............,:::,:::;;;;;:;;:;;;;;+;;;;;;;;;;:... ............\n............,,:::,::::;;;;;:;;:;;;;++;;;;;;;+++;;.. ............\n...........,::::,,::,;;;;;::;;::;;;;;;;;;;;;;;;;+:..............\n..........,:::::,::,:;;:;;:::;:::;;;;;:;;;;;;;;;;;,.............\n..........,::::,,::,:;;:;;,,:::;:;;;;::::;:;;;;;:;;.............\n.........,::,::,,::,,:;,:;:,,::;;:;;;;:::;:;;;;;;:;,............\n.........,::,:,,,:::,::,,::::,::;;;;;;::::;:;;;;;;:,............\n.........,,,,:,,,,:::,:,::,;;,:,:;;;;;:::,::::;:;;:,............\n.........,,,,,,,:,,::::,,,.:+;;;::::;;;:,..,.,:::;:.............\n..........,,,,,,:::,,,,.....+%?*??*++;;,....:;:,,::,............\n..........,,,,,,,::::++,,,,,*%%%%%%%%%%+::::+%*,:::,............\n...........,,,::,:;;;*%*++++?%%%%%%%%%%%****%%*:;;;.............\n............,:++::;;;+%%%%%%%%%%%%%%%%%%%%%%%%+::::,............\n..........,,.:*+:,::;;%%%%%%%%%%%%%%%%%%%%%%%%+::::,............\n.........,,,,,;++::;:;*%%%%%%%%%%%%%%%%%%%%%%%;::::,............\n.........,,,,,:,:,:;:;+?%%%%%%%%%%?%%%%%%%%%?+,:,::, ...........\n........,,,,,,,,,,,:;::+*?%%%%%%%%%%%%%%%?*;:,,:,::, ...........\n........,,,,,,,,,,,:;::,,:*??%%%%%%%%%?*;,,,,,,:,::, ...........\n........,,,,,,,,,,,,:;:,,,+*****????+;,.,,,,,,,,,;:, ...........\n........,,,,,.,,,,,,:;;,,,;********+,,..,,.,,,,,:;:. ...........\n........,,,,..,,,,,,,:;:,:+*********;:,.,,.,,,,,::,  ...........\n.......,,,,..,,,,,,,,,:;;*??****??%?%%?*+:,,,,,:;:.  ...........\n.......,,,..,,,,......:;;;*?????%%%%?????*,,,,,:;,   ...........\n.......,,...,......,,,,:;:,:+??%?%%??%%%*:,,,,,::,.. ...........\n.......,........,,,,,,.,:;:,,,:+*?????+:,,,,,.:;:,.,............\n..............,,.,,,,,.,:;:,,,,,,,,::,,,,,,,,,::,,.,,..........."
+        width:
+          type: integer
+          example: 64
+          format: int32
+        height:
+          type: integer
+          format: int32
+    ConvertRawResult:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RawAsciiArt"
+    RawAsciiArt:
+      type: object
+      properties:
+        characters:
+          type: array
+          items:
+            $ref: "#/components/schemas/AsciiCharacter"
+        width:
+          type: integer
+          example: 1
+          format: int32
+        height:
+          type: integer
+          example: 1
+          format: int32
+    AsciiCharacter:
+      type: object
+      properties:
+        character:
+          example: \@
+          type: string
+          maxLength: 1
+        r:
+          type: integer
+          example: 255
+          format: int32
+        g:
+          type: integer
+          example: 255
+          format: int32
+        b:
+          type: integer
+          example: 255
+          format: int32
+        a:
+          type: integer
+          example: 255
+          format: int32
+    Error:
+      type: object
+      properties:
+        message:
+          type: string

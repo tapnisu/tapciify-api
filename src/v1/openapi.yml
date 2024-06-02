@@ -65,6 +65,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ConvertResult"
+        "400":
+          description: ASCII art conversion error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "ASCII art conversion error: The image format could not be determined"
+        "5XX":
+          description: Unexpected error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Internal server error
 
   /convert/raw:
     post:
@@ -116,11 +130,6 @@ paths:
           schema:
             type: boolean
           description: Reverses the ASCII string
-        - in: query
-          name: colored
-          schema:
-            type: boolean
-          description: Makes the ASCII art colored
       responses:
         "200":
           description: Raw ASCII art generated successfully.
@@ -128,6 +137,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ConvertRawResult"
+        "400":
+          description: ASCII art conversion error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "ASCII art conversion error: The image format could not be determined"
+        "5XX":
+          description: Unexpected error.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Internal server error
 
 components:
   schemas:
@@ -150,6 +173,7 @@ components:
           format: int32
         height:
           type: integer
+          example: 29
           format: int32
     ConvertRawResult:
       type: object
@@ -196,8 +220,3 @@ components:
           type: integer
           example: 255
           format: int32
-    Error:
-      type: object
-      properties:
-        message:
-          type: string

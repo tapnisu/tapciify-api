@@ -17,7 +17,6 @@ pub struct ConvertQuery {
     #[serde(rename = "fontRatio")]
     pub font_ratio: Option<f64>,
     pub reverse: Option<bool>,
-    pub colored: Option<bool>,
 }
 
 pub fn bytes_to_ascii(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<AsciiArt> {
@@ -42,7 +41,7 @@ pub fn bytes_to_ascii(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<Asci
                 true => ascii_string.chars().rev().collect(),
                 false => ascii_string,
             },
-            colored: query.colored.unwrap_or(false),
+            ..Default::default()
         })?;
 
     Ok(ascii_art)

@@ -1,4 +1,5 @@
 FROM rust:1.78 as builder
+LABEL authors="tapnisu"
 
 WORKDIR /usr/src/tapciify-api
 COPY . .

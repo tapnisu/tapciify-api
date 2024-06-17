@@ -21,7 +21,7 @@ axum = { version = "0.7", features = ["multipart", "tracing"] }
 axum-server = { version = "0.6.0", features = ["tls-rustls"] }
 image = { version = "0.25", features = [
     "default-formats",
-], default_features = false }
+], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 tapciify = { version = "3.1", default-features = false }
 tokio = { version = "1", features = ["full"] }

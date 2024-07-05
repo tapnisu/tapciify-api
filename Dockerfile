@@ -1,11 +1,14 @@
-FROM rust:1.78 as builder
+FROM rust:1.78-alpine3.20 as builder
 LABEL authors="tapnisu"
 
 WORKDIR /usr/src/tapciify-api
+
+RUN apk add --no-cache alpine-sdk
+
 COPY . .
 RUN cargo build --release
 
-FROM debian:bookworm-slim
+FROM alpine:3.20
 
 COPY --from=builder /usr/src/tapciify-api/target/release/tapciify-api /usr/local/bin/tapciify-api
 

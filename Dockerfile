@@ -8,7 +8,7 @@ RUN apk add --no-cache alpine-sdk
 COPY . .
 RUN cargo build --release
 
-FROM alpine:3.20
+FROM alpine:3.20 as runner
 
 COPY --from=builder /usr/src/tapciify-api/target/release/tapciify-api /usr/local/bin/tapciify-api
 

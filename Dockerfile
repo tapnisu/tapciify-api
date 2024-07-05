@@ -1,14 +1,19 @@
-FROM rust:1.78-alpine3.20 as builder
+FROM rust:1.79-alpine3.20 as builder
 LABEL authors="tapnisu"
 
 WORKDIR /usr/src/tapciify-api
 
-RUN apk add --no-cache alpine-sdk
+RUN apk update \
+    && apk upgrade --available \
+    && apk add --no-cache alpine-sdk
 
 COPY . .
 RUN cargo build --release
 
 FROM alpine:3.20 as runner
+
+RUN apk update \
+    && apk upgrade --available
 
 COPY --from=builder /usr/src/tapciify-api/target/release/tapciify-api /usr/local/bin/tapciify-api
 

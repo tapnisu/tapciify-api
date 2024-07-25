@@ -1,6 +1,6 @@
 use anyhow::Result;
 use axum::{body::Bytes, extract::Query};
-use image::{imageops::FilterType, io::Reader as ImageReader};
+use image::{imageops::FilterType, ImageReader};
 use serde::Deserialize;
 use std::io::Cursor;
 use tapciify::{

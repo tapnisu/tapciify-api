@@ -11,8 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # Don't forget to update `Cargo.toml`
-      - name: Setup rust 1.74
-        run: rustup toolchain install 1.74 --profile minimal --no-self-update
+      - name: Setup rust 1.87
+        run: rustup toolchain install 1.87 --profile minimal --no-self-update
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
       - name: Build

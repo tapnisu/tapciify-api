@@ -9,7 +9,7 @@ keywords = ["image", "ascii", "api"]
 license = "MIT"
 
 # Don't forget to update `.github/workflows/test.yml`
-rust-version = "1.74"
+rust-version = "1.87"
 
 documentation = "https://api.tapciify.ru/"
 repository = "https://github.com/tapciify/tapciify-api"
@@ -17,15 +17,14 @@ homepage = "https://github.com/tapciify/tapciify-api"
 
 [dependencies]
 anyhow = "1.0"
-axum = { version = "0.7", features = ["multipart", "tracing"] }
-axum-server = { version = "0.6.0", features = ["tls-rustls"] }
+axum = { version = "0.8", features = ["multipart", "tracing"] }
 image = { version = "0.25", features = [
     "default-formats",
 ], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
-tapciify = { version = "3.1", default-features = false }
+tapciify = { version = "3", default-features = false }
 tokio = { version = "1", features = ["full"] }
-tower-http = { version = "0.5", features = ["cors", "trace"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 urlencoding = "2"
